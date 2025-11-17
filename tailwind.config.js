@@ -13,11 +13,12 @@ export default {
   				'Roboto',
   				'sans-serif'
   			],
-			display: [
-				'Inter',
-				'system-ui',
-				'sans-serif'
-			],
+  			display: [
+  				'Cal Sans',
+  				'Inter',
+  				'system-ui',
+  				'sans-serif'
+  			],
   			mono: [
   				'JetBrains Mono',
   				'Fira Code',
@@ -149,6 +150,11 @@ export default {
   			glass: '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
   		},
   		keyframes: {
+        'gradient-move': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
   			'fade-in': {
   				'0%': {
   					opacity: '0',
@@ -221,6 +227,7 @@ export default {
   			}
   		},
   		animation: {
+        'gradient-move': 'gradient-move 15s ease infinite',
   			'fade-in': 'fade-in 0.6s ease-out',
   			'slide-up': 'slide-up 0.4s ease-out',
   			'scale-in': 'scale-in 0.3s ease-out',

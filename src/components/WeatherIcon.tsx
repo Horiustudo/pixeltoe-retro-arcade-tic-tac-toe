@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, CloudDrizzle, SunSnow, CloudSun, CloudHail, Tornado, LucideProps, Moon, CloudMoon
+  Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Wind, CloudDrizzle, SunSnow, CloudSun, CloudHail, Tornado, LucideProps
 } from 'lucide-react';
 import { getWeatherInterpretation } from '@/lib/weather';
 interface WeatherIconProps extends LucideProps {
@@ -20,8 +20,6 @@ const iconMap: { [key: string]: React.ElementType } = {
   CloudSun,
   CloudHail,
   Tornado,
-  Moon,
-  CloudMoon,
 };
 export function WeatherIcon({ weatherCode, isDay = true, ...props }: WeatherIconProps) {
   const interpretation = getWeatherInterpretation(weatherCode, isDay);
