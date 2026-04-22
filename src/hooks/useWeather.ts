@@ -18,7 +18,7 @@ export function useWeather() {
         latitude: latitude.toString(),
         longitude: longitude.toString(),
         current: 'temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m',
-        hourly: 'temperature_2m,weather_code',
+        hourly: 'temperature_2m,weather_code,is_day',
         daily: 'weather_code,temperature_2m_max,temperature_2m_min',
         timezone: 'auto',
       });
@@ -29,6 +29,7 @@ export function useWeather() {
       setWeather(processedData);
       setLocation({ name, country, latitude, longitude });
     } catch (err) {
+      console.error('[WEATHER_FETCH_ERROR]', err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
     } finally {
       setLoading(false);

@@ -39,17 +39,17 @@ export function HomePage() {
     fetchWeatherForCity(city);
     setOpen(false);
   };
-  const weatherTheme = weather 
-    ? getWeatherTheme(weather.current.weatherCode, weather.current.isDay) 
+  const weatherTheme = weather
+    ? getWeatherTheme(weather.current.weatherCode, weather.current.isDay)
     : 'sunny';
-  const interpretation = weather 
-    ? getWeatherInterpretation(weather.current.weatherCode, weather.current.isDay) 
+  const interpretation = weather
+    ? getWeatherInterpretation(weather.current.weatherCode, weather.current.isDay)
     : null;
-  const bgClass = weatherTheme === 'night' ? 'bg-weather-night' : 
+  const bgClass = weatherTheme === 'night' ? 'bg-weather-night' :
                   weatherTheme === 'cloudy' ? 'bg-weather-cloudy' :
                   weatherTheme === 'rainy' ? 'bg-weather-rainy' :
                   weatherTheme === 'snowy' ? 'bg-weather-snowy' :
-                  weatherTheme === 'stormy' ? 'bg-weather-stormy' : 
+                  weatherTheme === 'stormy' ? 'bg-weather-stormy' :
                   'bg-weather-sunny';
   return (
     <>
@@ -114,7 +114,7 @@ export function HomePage() {
                             {weather.hourly.map((hour, index) => (
                               <div key={index} className="flex flex-col items-center space-y-2 flex-shrink-0 w-20 text-center p-3 rounded-xl hover:bg-white/20 dark:hover:bg-white/5 transition-colors">
                                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{hour.time}</p>
-                                <WeatherIcon weatherCode={hour.weatherCode} isDay={weather.current.isDay} className="w-8 h-8 text-blue-500 dark:text-blue-400" />
+                                <WeatherIcon weatherCode={hour.weatherCode} isDay={hour.isDay} className="w-8 h-8 text-blue-500 dark:text-blue-400" />
                                 <p className="text-base font-bold text-slate-800 dark:text-slate-100">{hour.temperature}°</p>
                               </div>
                             ))}
@@ -128,7 +128,7 @@ export function HomePage() {
                               <div key={index} className="grid grid-cols-3 items-center gap-4 p-3 rounded-xl hover:bg-white/20 dark:hover:bg-white/5 transition-colors">
                                 <p className="font-medium text-left text-slate-700 dark:text-slate-300">{day.time}</p>
                                 <div className="flex justify-center items-center gap-2">
-                                  <WeatherIcon weatherCode={day.weatherCode} className="w-7 h-7 text-blue-500 dark:text-blue-400" />
+                                  <WeatherIcon weatherCode={day.weatherCode} isDay={true} className="w-7 h-7 text-blue-500 dark:text-blue-400" />
                                 </div>
                                 <p className="font-medium text-right">
                                   <span className="font-bold text-slate-900 dark:text-white">{day.tempMax}°</span>

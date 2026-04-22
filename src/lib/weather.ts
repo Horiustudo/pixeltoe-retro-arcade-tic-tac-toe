@@ -14,6 +14,7 @@ export interface WeatherData {
     time: string;
     temperature: number;
     weatherCode: number;
+    isDay: boolean;
   }[];
   daily: {
     time: string;
@@ -38,6 +39,7 @@ export const processWeatherData = (apiData: any): WeatherData => {
     time: format(parseISO(time), 'ha'),
     temperature: Math.round(hourly.temperature_2m[index]),
     weatherCode: hourly.weather_code[index],
+    isDay: hourly.is_day[index] === 1,
   }));
   const processedDaily = daily.time.map((time: string, index: number) => ({
     time: format(parseISO(time), 'EEEE'),
