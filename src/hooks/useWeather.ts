@@ -1,18 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useWeatherStore } from '@/store/weatherStore';
 import { processWeatherData } from '@/lib/weather';
 const GEOCODING_API = 'https://geocoding-api.open-meteo.com/v1/search';
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast';
 export function useWeather() {
-  const {
-    setLocation,
-    setWeather,
-    setLoading,
-    setError,
-    reset,
-  } = useWeatherStore.getState();
+  const setLocation = useWeatherStore(s => s.setLocation);
+  const setWeather = useWeatherStore(s => s.setWeather);
+  const setLoading = useWeatherStore(s => s.setLoading);
+  const setError = useWeatherStore(s => s.setError);
+  const reset = useWeatherStore(s => s.reset);
   const location = useWeatherStore(s => s.location);
-  const fetchWeatherForCoords = async (latitude: number, longitude: number, name: string, country: string) => {
+  const fetchWeatherForCoords = useCallback(async (latitude: number, longitude: number, name: string, country: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -35,8 +33,8 @@ export function useWeather() {
     } finally {
       setLoading(false);
     }
-  };
-  const fetchWeatherForCity = async (city: string) => {
+  }, [setLocation, setWeather, setLoading, setError]);
+  const fetchWeatherForCity = useCallback(async (city: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -52,11 +50,11 @@ export function useWeather() {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
       setLoading(false);
     }
-  };
-  const fetchWeatherForCurrentUserLocation = () => {
+  }, [fetchWeatherForCoords, setLoading, setError]);
+  const fetchWeatherForCurrentUserLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by your browser.');
-      fetchWeatherForCity('New York'); // Fallback
+      fetchWeatherForCity('New York');
       return;
     }
     setLoading(true);
@@ -67,14 +65,14 @@ export function useWeather() {
       },
       () => {
         setError('Unable to retrieve your location. Showing default.');
-        fetchWeatherForCity('New York'); // Fallback
+        fetchWeatherForCity('New York');
       }
     );
-  };
+  }, [fetchWeatherForCity, fetchWeatherForCoords, setLoading, setError]);
   useEffect(() => {
     if (!location) {
       fetchWeatherForCurrentUserLocation();
     }
-  }, [location]);
+  }, [location, fetchWeatherForCurrentUserLocation]);
   return { fetchWeatherForCity, fetchWeatherForCurrentUserLocation, reset };
 }
