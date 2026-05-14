@@ -150,8 +150,9 @@ export function HomePage() {
                 )}
               </AnimatePresence>
             </main>
-            <footer className="text-center mt-12 text-sm text-slate-500/60">
+            <footer className="text-center mt-12 text-sm text-slate-500/60 flex flex-col items-center">
               <p>Built with ❤️ at Cloudflare • Open-Meteo API</p>
+              <p className="text-xs opacity-50 mt-1">after private</p>
             </footer>
           </div>
         </div>
@@ -184,7 +185,7 @@ const DetailCard = ({ icon: Icon, label, value }: { icon: React.ElementType, lab
   </div>
 );
 const WeatherSkeleton = () => (
-  <Card className="bg-white/40 dark:bg-black/20 backdrop-blur-md border-white/20">
+  <Card className="bg-white/40 dark:bg-black/20 backdrop-blur-md border-white/20 shadow-lg">
     <CardContent className="p-6 md:p-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="flex flex-col items-center md:items-start space-y-4">

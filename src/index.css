@@ -62,14 +62,9 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-}
-@keyframes gradient-move {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-.floating {
-  animation: floating 3s ease-in-out infinite;
+  .floating {
+    animation: floating 3s ease-in-out infinite;
+  }
 }
 @keyframes floating {
   0%, 100% { transform: translateY(0); }
