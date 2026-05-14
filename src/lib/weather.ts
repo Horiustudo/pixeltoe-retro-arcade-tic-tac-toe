@@ -24,28 +24,30 @@ export interface WeatherData {
   }[];
 }
 export const processWeatherData = (apiData: any): WeatherData => {
-  const { current, hourly, daily } = apiData;
+  const current = apiData?.current ?? {};
+  const hourly = apiData?.hourly ?? { time: [], temperature_2m: [], weather_code: [], is_day: [] };
+  const daily = apiData?.daily ?? { time: [], weather_code: [], temperature_2m_max: [], temperature_2m_min: [] };
   const processedCurrent = {
-    time: current.time,
-    temperature: Math.round(current.temperature_2m),
-    apparentTemperature: Math.round(current.apparent_temperature),
-    humidity: current.relative_humidity_2m,
-    precipitation: current.precipitation,
-    weatherCode: current.weather_code,
-    windSpeed: Math.round(current.wind_speed_10m),
+    time: current.time ?? new Date().toISOString(),
+    temperature: Math.round(current.temperature_2m ?? 0),
+    apparentTemperature: Math.round(current.apparent_temperature ?? 0),
+    humidity: current.relative_humidity_2m ?? 0,
+    precipitation: current.precipitation ?? 0,
+    weatherCode: current.weather_code ?? 0,
+    windSpeed: Math.round(current.wind_speed_10m ?? 0),
     isDay: current.is_day === 1,
   };
-  const processedHourly = hourly.time.slice(0, 24).map((time: string, index: number) => ({
-    time: format(parseISO(time), 'ha'),
-    temperature: Math.round(hourly.temperature_2m[index]),
-    weatherCode: hourly.weather_code[index],
-    isDay: hourly.is_day[index] === 1,
+  const processedHourly = (hourly.time || []).slice(0, 24).map((time: string, index: number) => ({
+    time: time ? format(parseISO(time), 'ha') : '--',
+    temperature: Math.round(hourly.temperature_2m?.[index] ?? 0),
+    weatherCode: hourly.weather_code?.[index] ?? 0,
+    isDay: hourly.is_day?.[index] === 1,
   }));
-  const processedDaily = daily.time.map((time: string, index: number) => ({
-    time: format(parseISO(time), 'EEEE'),
-    weatherCode: daily.weather_code[index],
-    tempMax: Math.round(daily.temperature_2m_max[index]),
-    tempMin: Math.round(daily.temperature_2m_min[index]),
+  const processedDaily = (daily.time || []).map((time: string, index: number) => ({
+    time: time ? format(parseISO(time), 'EEEE') : '--',
+    weatherCode: daily.weather_code?.[index] ?? 0,
+    tempMax: Math.round(daily.temperature_2m_max?.[index] ?? 0),
+    tempMin: Math.round(daily.temperature_2m_min?.[index] ?? 0),
   }));
   return {
     current: processedCurrent,
@@ -84,18 +86,17 @@ const WMO_CODES: { [key: number]: { description: string; icon: string; dayIcon?:
   99: { description: 'Thunderstorm with heavy hail', icon: 'CloudHail', theme: 'stormy' },
 };
 export const getWeatherInterpretation = (code: number, isDay: boolean = true) => {
-  const weather = WMO_CODES[code];
-  if (!weather) return { description: 'Unknown', icon: 'Sun', theme: 'sunny' };
-  if (isDay && weather.dayIcon) {
-    return { ...weather, icon: weather.dayIcon };
-  }
+  const weather = WMO_CODES[code] ?? { description: 'Unknown', icon: 'Sun', theme: 'sunny' };
   if (!isDay && weather.nightIcon) {
     return { ...weather, icon: weather.nightIcon };
+  }
+  if (isDay && weather.dayIcon) {
+    return { ...weather, icon: weather.dayIcon };
   }
   return weather;
 };
 export const getWeatherTheme = (code: number, isDay: boolean): string => {
   if (!isDay) return 'night';
   const weather = WMO_CODES[code];
-  return weather?.theme || 'sunny';
+  return weather?.theme ?? 'sunny';
 };

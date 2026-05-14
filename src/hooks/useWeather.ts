@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useWeatherStore } from '@/store/weatherStore';
 import { processWeatherData } from '@/lib/weather';
 const GEOCODING_API = 'https://geocoding-api.open-meteo.com/v1/search';
@@ -10,6 +10,7 @@ export function useWeather() {
   const setError = useWeatherStore(s => s.setError);
   const reset = useWeatherStore(s => s.reset);
   const location = useWeatherStore(s => s.location);
+  const hasInitialized = useRef(false);
   const fetchWeatherForCoords = useCallback(async (latitude: number, longitude: number, name: string, country: string) => {
     setLoading(true);
     setError(null);
@@ -23,14 +24,14 @@ export function useWeather() {
         timezone: 'auto',
       });
       const response = await fetch(`${WEATHER_API}?${params.toString()}`);
-      if (!response.ok) throw new Error('Failed to fetch weather data.');
+      if (!response.ok) throw new Error('Failed to fetch weather data from service.');
       const data = await response.json();
       const processedData = processWeatherData(data);
       setWeather(processedData);
       setLocation({ name, country, latitude, longitude });
     } catch (err) {
       console.error('[WEATHER_FETCH_ERROR]', err);
-      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+      setError(err instanceof Error ? err.message : 'An unknown error occurred while fetching weather.');
     } finally {
       setLoading(false);
     }
@@ -40,7 +41,7 @@ export function useWeather() {
     setError(null);
     try {
       const geoResponse = await fetch(`${GEOCODING_API}?name=${encodeURIComponent(city)}&count=1`);
-      if (!geoResponse.ok) throw new Error('Failed to find city.');
+      if (!geoResponse.ok) throw new Error('Failed to reach geocoding service.');
       const geoData = await geoResponse.json();
       if (!geoData.results || geoData.results.length === 0) {
         throw new Error(`Could not find location: ${city}`);
@@ -48,14 +49,14 @@ export function useWeather() {
       const { latitude, longitude, name, country } = geoData.results[0];
       await fetchWeatherForCoords(latitude, longitude, name, country);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+      setError(err instanceof Error ? err.message : 'An unknown error occurred during search.');
       setLoading(false);
     }
   }, [fetchWeatherForCoords, setLoading, setError]);
   const fetchWeatherForCurrentUserLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setError('Geolocation is not supported by your browser.');
-      fetchWeatherForCity('New York');
+      setError('Geolocation is not supported. Showing default location.');
+      fetchWeatherForCity('London');
       return;
     }
     setLoading(true);
@@ -64,14 +65,17 @@ export function useWeather() {
         const { latitude, longitude } = position.coords;
         fetchWeatherForCoords(latitude, longitude, 'Your Location', '');
       },
-      () => {
-        setError('Unable to retrieve your location. Showing default.');
-        fetchWeatherForCity('New York');
-      }
+      (error) => {
+        console.warn('[GEOLOCATION_DENIED]', error);
+        setError('Location access denied. Showing default location.');
+        fetchWeatherForCity('London');
+      },
+      { timeout: 10000 }
     );
   }, [fetchWeatherForCity, fetchWeatherForCoords, setLoading, setError]);
   useEffect(() => {
-    if (!location) {
+    if (!location && !hasInitialized.current) {
+      hasInitialized.current = true;
       fetchWeatherForCurrentUserLocation();
     }
   }, [location, fetchWeatherForCurrentUserLocation]);
