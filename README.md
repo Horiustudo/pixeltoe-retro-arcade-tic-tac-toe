@@ -1,6 +1,6 @@
 # Nimbus Weather
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Horiustudo/pixeltoe-retro-arcade-tic-tac-toe)
 
 Nimbus is a minimalist, visually-driven weather application designed for clarity and aesthetic appeal. It provides users with current weather conditions, hourly, and daily forecasts in a clean, uncluttered interface. The core of the application is a central content card that displays all relevant weather information for a searched or geolocated city. The design prioritizes 'less is more', utilizing generous white space, a muted color palette, and fluid animations to create a serene and intuitive user experience.
 
@@ -88,7 +88,7 @@ This command will build the application and deploy it to your Cloudflare account
 
 You can also deploy this project directly to Cloudflare with a single click.
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Horiustudo/pixeltoe-retro-arcade-tic-tac-toe)
 
 ## Contributing
 
